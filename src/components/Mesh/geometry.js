@@ -1,5 +1,5 @@
 import Martini from "@mapbox/martini";
-import { loadImageData } from "./tiles.js";
+import { loadImageDataOld } from "./tiles.js";
 import { terrainUrl, terrainSize, meshMaxError } from "../common/config.js";
 
 import { BufferAttribute, BufferGeometry } from "three";
@@ -15,7 +15,7 @@ export default async function getGeometry(position, zoom) {
 }
 
 function imageData({ lon, lat }, zoom) {
-  return loadImageData({
+  return loadImageDataOld({
     lon,
     lat,
     zoom: zoom + Math.log2(256 / terrainTileSize),

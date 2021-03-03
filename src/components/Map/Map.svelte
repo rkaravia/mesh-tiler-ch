@@ -1,13 +1,13 @@
 <script>
   import "./hash.js";
   import {
-    mapUrl,
     mapTilerAttribution,
     openStreetMapAttribution
   } from "../common/config.js";
   import position from "../common/position.js";
 
   import L from "leaflet";
+  import SwissLayer from "leaflet-tilelayer-swiss";
   import { onMount } from "svelte";
 
   let container;
@@ -42,7 +42,7 @@
           });
 
         if (centerMap) {
-          map.setView([lat, lon], 5);
+          map.setView([lat, lon], 15);
         }
         centerMap = true;
       } else {
@@ -52,7 +52,10 @@
   });
 
   function initMap() {
-    const map = new L.Map(container, { attributionControl: false });
+    const map = new L.Map(container, {
+      attributionControl: false,
+      crs: L.CRS.EPSG2056
+    });
 
     L.control
       .attribution({
@@ -60,12 +63,7 @@
       })
       .addTo(map);
 
-    new L.TileLayer(mapUrl, {
-      attribution: `${mapTilerAttribution} ${openStreetMapAttribution}`,
-      minZoom: 1,
-      tileSize: 512,
-      zoomOffset: -1
-    }).addTo(map);
+    new SwissLayer().addTo(map);
 
     return map;
   }
