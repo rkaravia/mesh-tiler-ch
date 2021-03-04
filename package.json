@@ -17,6 +17,7 @@
   "dependencies": {
     "@mapbox/martini": "^0.2.0",
     "@rkaravia/static-map": "^0.2.2",
+    "geotiff": "^1.0.0-beta.16",
     "leaflet": "^1.7.1",
     "leaflet-tilelayer-swiss": "^2.2.1",
     "sirv-cli": "^1.0.11",

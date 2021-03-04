@@ -28,6 +28,7 @@ export default {
     copy({
       targets: [
         { src: "screenshot.png", dest: "public/images" },
+        { src: "node_modules/geotiff/dist-browser/geotiff.js", dest: "public" },
         { src: "node_modules/leaflet/dist/images", dest: "public" },
       ],
     }),

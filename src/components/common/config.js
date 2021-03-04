@@ -10,8 +10,8 @@ export const mapTilerAttribution =
 export const openStreetMapAttribution =
   '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>';
 
-export const meshZoom = 11;
-export const terrainSize = 512;
+export const meshZoom = 23;
+export const terrainSize = 1024;
 export const textureSize = 1024;
 
 export const meshMaxError = 1;
