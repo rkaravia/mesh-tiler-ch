@@ -36,7 +36,7 @@ const RESOLUTIONS = [
   0.1,
 ];
 
-function lonLatToPixel({ lon, lat, zoom }) {
+function lonLatToPixelWmts({ lon, lat, zoom }) {
   const left = 2420000;
   const top = 1350000;
   const [E, N] = project([lon, lat]);
@@ -45,15 +45,17 @@ function lonLatToPixel({ lon, lat, zoom }) {
   });
 }
 
-function lonLatToPixel2({ lon, lat, zoom }) {
+function lonLatToPixelSwissAlti3D({ lon, lat, zoom }) {
   return project([lon, lat]).map((coord) => {
     return Math.round(coord / RESOLUTIONS[zoom]);
   });
 }
 
 export function loadToCanvas({ lon, lat, zoom, tileSize, size, url }) {
-  // const { lon, lat, zoom, tileSize, size, url } = options;
-  const staticMap = new StaticMap([url], { size: tileSize, lonLatToPixel });
+  const staticMap = new StaticMap([url], {
+    size: tileSize,
+    lonLatToPixel: lonLatToPixelWmts,
+  });
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
@@ -64,28 +66,15 @@ export function loadToCanvas({ lon, lat, zoom, tileSize, size, url }) {
   });
 }
 
-export async function loadImageData(options) {
-  const canvas = await loadToCanvas(options);
-  const { size } = options;
-  const context = canvas.getContext("2d");
-  const { data } = context.getImageData(0, 0, size, size);
-  return data;
-}
-
-export function loadSwissAlti3D({ lon, lat, size }) {
-  const zoom = 23;
-  const tileSize = 500;
-  const url =
-    "https://data.geo.admin.ch/ch.swisstopo.swissalti3d/swissalti3d_2019_{x}-{y}/swissalti3d_2019_{x}-{y}_2_2056_5728.tif";
+export function loadSwissAlti3D({ lon, lat, zoom, tileSize, size, url }) {
   const staticMap = new StaticMap([url], {
     size: tileSize,
-    lonLatToPixel: lonLatToPixel2,
+    lonLatToPixel: lonLatToPixelSwissAlti3D,
     tileLoader: async (url, callback) => {
       const blob = await fetch(url).then((response) => response.blob());
       const pyramid = await GeoTIFF.fromBlob(blob);
       const image = await pyramid.getImage(0);
       const data = await image.readRasters();
-      console.log(data);
       callback(data);
     },
   });
@@ -98,23 +87,21 @@ export function loadSwissAlti3D({ lon, lat, size }) {
     height: size,
     getContext() {
       return {
-        drawImage(image, x, y, width, height) {
+        drawImage(image, xOffset, yOffset, width, height) {
           const data = image[0];
-          const xFrom = Math.max(0, x);
-          const xTo = Math.min(x + width, terrainSize);
-          const yFrom = Math.max(0, y);
-          const yTo = Math.min(y + height, terrainSize);
-          console.log({ xFrom, xTo, yFrom, yTo });
-          for (let j = yFrom; j < yTo; j += 1) {
-            // console.log(j);
-            for (let i = xFrom; i < xTo; i += 1) {
-              const yData = j - y;
-              const value = data[(tileSize - 1 - yData) * tileSize + i - x];
-              terrain[(terrainSize - 1 - j) * gridSize + i] =
-                value < 0 ? 4000 : value;
+          const xFrom = Math.max(0, xOffset);
+          const xTo = Math.min(xOffset + width, terrainSize);
+          const yFrom = Math.max(0, yOffset);
+          const yTo = Math.min(yOffset + height, terrainSize);
+          for (let y = yFrom; y < yTo; y += 1) {
+            for (let x = xFrom; x < xTo; x += 1) {
+              const xSrc = x - xOffset;
+              const ySrc = tileSize - 1 - (y - yOffset);
+              const xDst = x;
+              const yDst = terrainSize - 1 - y;
+              terrain[yDst * gridSize + xDst] = data[ySrc * tileSize + xSrc];
             }
           }
-          console.log({ image, x, y, width, height });
         },
       };
     },
@@ -124,25 +111,4 @@ export function loadSwissAlti3D({ lon, lat, size }) {
       resolve(terrain);
     });
   });
-}
-
-export function loadToCanvasOld(options) {
-  const { lon, lat, zoom, tileSize, size, url } = options;
-  const staticMap = new StaticMap([url], { size: tileSize });
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-  return new Promise((resolve) => {
-    staticMap.getMap(canvas, lon, lat, zoom, () => {
-      resolve(canvas);
-    });
-  });
-}
-
-export async function loadImageDataOld(options) {
-  const canvas = await loadToCanvasOld(options);
-  const { size } = options;
-  const context = canvas.getContext("2d");
-  const { data } = context.getImageData(0, 0, size, size);
-  return data;
 }

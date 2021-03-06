@@ -1,10 +1,10 @@
 import getGeometry from "./geometry.js";
 import getTexture from "./texture.js";
 
-export default async function getMesh(position, zoom) {
+export default async function getMesh(position) {
   const [geometry, texture] = await Promise.all([
-    getGeometry(position, zoom),
-    getTexture(position, zoom),
+    getGeometry(position),
+    getTexture(position),
   ]);
   return { geometry, texture };
 }

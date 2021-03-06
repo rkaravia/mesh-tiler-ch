@@ -2,19 +2,11 @@ import css from "rollup-plugin-css-only";
 import copy from "rollup-plugin-copy";
 import svelte from "rollup-plugin-svelte";
 import resolve from "rollup-plugin-node-resolve";
-import replace from "rollup-plugin-replace";
 import commonjs from "rollup-plugin-commonjs";
 import livereload from "rollup-plugin-livereload";
 import { terser } from "rollup-plugin-terser";
 
 const production = !process.env.ROLLUP_WATCH;
-
-if (!process.env.MAPTILER_KEY) {
-  console.error(
-    "ERROR: MAPTILER_KEY environment variable is missing, see README.md for more information."
-  );
-  process.exit();
-}
 
 export default {
   input: "src/main.js",
@@ -51,10 +43,6 @@ export default {
     resolve({
       browser: true,
       dedupe: ["svelte"],
-    }),
-
-    replace({
-      MAPTILER_KEY: process.env.MAPTILER_KEY,
     }),
 
     commonjs(),

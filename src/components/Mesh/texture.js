@@ -1,16 +1,22 @@
 import { loadToCanvas } from "./tiles.js";
-import { satelliteUrl, terrainSize, textureSize } from "../common/config.js";
+import {
+  textureUrl,
+  textureSize,
+  textureTileSize,
+  textureZoom,
+} from "../common/config.js";
 
 import { CanvasTexture } from "three";
 
-export default async function getTexture(position, zoom) {
+export default async function getTexture(position) {
   const { lon, lat } = position;
   const canvas = await loadToCanvas({
     lon,
     lat,
-    zoom: zoom + Math.log2(textureSize / terrainSize),
+    zoom: textureZoom,
+    tileSize: textureTileSize,
     size: textureSize,
-    url: satelliteUrl,
+    url: textureUrl,
   });
   return new CanvasTexture(canvas);
 }

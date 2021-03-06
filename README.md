@@ -21,10 +21,8 @@ npm install
 
 ## Run
 
-You will need a key from [MapTiler](https://cloud.maptiler.com/account/keys).
-
 ```
-MAPTILER_KEY=<insert your key here> npm run dev
+npm run dev
 ```
 
 ## License

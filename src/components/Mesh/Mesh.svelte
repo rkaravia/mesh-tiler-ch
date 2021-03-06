@@ -1,7 +1,7 @@
 <script>
   import getMesh from "./mesh.js";
   import Renderer from "./renderer.js";
-  import { mapTilerAttribution, meshZoom } from "../common/config.js";
+  import { swisstopoAttribution } from "../common/config.js";
   import getRandomPlace from "../common/places.js";
   import position from "../common/position.js";
 
@@ -22,7 +22,7 @@
     hasMesh = false;
     if (newPosition) {
       isMeshLoading = true;
-      getMesh(newPosition, meshZoom).then(mesh => {
+      getMesh(newPosition).then(mesh => {
         renderer.updateMesh(mesh);
         isMeshLoading = false;
         hasMesh = true;
@@ -99,12 +99,8 @@
       </svg>
     </a>
     <div class="attribution">
-      Code: © Roman Karavia,
-      <a href="https://github.com/rkaravia/MeshTiler" target="_blank">
-        Open Source
-      </a>
-      | Data:
-      {@html mapTilerAttribution}
+      Code: © Roman Karavia | Data:
+      {@html swisstopoAttribution}
     </div>
   {:else}
     <span>

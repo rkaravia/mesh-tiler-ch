@@ -1,9 +1,5 @@
 <script>
   import "./hash.js";
-  import {
-    mapTilerAttribution,
-    openStreetMapAttribution
-  } from "../common/config.js";
   import position from "../common/position.js";
 
   import L from "leaflet";
@@ -42,7 +38,7 @@
           });
 
         if (centerMap) {
-          map.setView([lat, lon], 15);
+          map.setView([lat, lon], 18);
         }
         centerMap = true;
       } else {

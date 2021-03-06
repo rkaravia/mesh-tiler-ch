@@ -1,66 +1,33 @@
 import Martini from "@mapbox/martini";
-import { loadImageDataOld, loadSwissAlti3D } from "./tiles.js";
-import { terrainUrl, terrainSize, meshMaxError } from "../common/config.js";
+import { loadSwissAlti3D } from "./tiles.js";
+import {
+  terrainSize,
+  meshMaxError,
+  terrainTileSize,
+  terrainZoom,
+  terrainUrl,
+} from "../common/config.js";
 
 import { BufferAttribute, BufferGeometry } from "three";
-import { project } from "swissgrid";
-
-// global.parcelRequire = null;
-// import * as geotiff from "geotiff/dist-browser/geotiff";
-// const geotiff = require("geotiff/dist-browser/geotiff");
 
 const gridSize = terrainSize + 1;
 
-const terrainTileSize = 512;
-
-export default async function getGeometry(position, zoom) {
-  const data = await loadSwissAlti3D({ ...position, size: terrainSize });
-  // const data = await imageData(position, zoom);
-  const terrain = terrainData(data);
-  console.log(terrain);
-  return geometryData(terrain, position, zoom);
-}
-
-async function gtf({ lon, lat }) {
-  const EN = project([lon, lat]);
-  const [E, N] = EN.map((c) => Math.round(c / 1000));
-  const blob = await fetch(
-    `https://data.geo.admin.ch/ch.swisstopo.swissalti3d/swissalti3d_2019_${E}-${N}/swissalti3d_2019_${E}-${N}_2_2056_5728.tif`
-  ).then((response) => response.blob());
-  const pyramid = await GeoTIFF.fromBlob(blob);
-  const image = await pyramid.getImage(0);
-  const data = (await image.readRasters())[0];
-  // console.log(data);
-}
-
-function imageData({ lon, lat }, zoom) {
-  return loadImageDataOld({
+export default async function getGeometry({ lon, lat }) {
+  const terrain = await loadSwissAlti3D({
     lon,
     lat,
-    zoom: zoom + Math.log2(256 / terrainTileSize),
+    zoom: terrainZoom,
     tileSize: terrainTileSize,
     size: terrainSize,
     url: terrainUrl,
   });
+  backfillTerrain(terrain);
+  return geometryData(terrain);
 }
 
 // Adapted from https://github.com/mapbox/martini/blob/1ca5ca075a169231feb3357c513de774425ff1de/test/util.js
 // ISC License, Copyright (c) 2019, Mapbox
-function terrainData(terrain) {
-  // const terrain = new Float32Array(gridSize * gridSize);
-
-  // // decode terrain values
-  // for (let y = 0; y < terrainSize; y++) {
-  //   for (let x = 0; x < terrainSize; x++) {
-  //     const k = (y * terrainSize + x) * 4;
-  //     const r = data[k + 0];
-  //     const g = data[k + 1];
-  //     const b = data[k + 2];
-  //     terrain[y * gridSize + x] =
-  //       (r * 256 * 256 + g * 256.0 + b) / 10.0 - 10000.0;
-  //   }
-  // }
-
+function backfillTerrain(terrain) {
   // backfill right and bottom borders
   for (let x = 0; x < gridSize - 1; x++) {
     terrain[gridSize * (gridSize - 1) + x] =
@@ -69,12 +36,10 @@ function terrainData(terrain) {
   for (let y = 0; y < gridSize; y++) {
     terrain[gridSize * y + gridSize - 1] = terrain[gridSize * y + gridSize - 2];
   }
-
-  return terrain;
 }
 
 // Adapted from https://observablehq.com/@mourner/martin-real-time-rtin-terrain-mesh
-function geometryData(terrain, { lat }, zoom) {
+function geometryData(terrain) {
   const martini = new Martini(gridSize);
   const tile = martini.createTile(terrain);
   const { vertices, triangles } = tile.getMesh(meshMaxError);
@@ -85,10 +50,7 @@ function geometryData(terrain, { lat }, zoom) {
     minTerrain = Math.min(terrain[i], minTerrain);
   }
 
-  const earthRadius = 6378137;
-  const meters = earthRadius * 2 * Math.PI * Math.cos((lat * Math.PI) / 180);
-  const pixels = Math.pow(2, zoom) * 256;
-  const metersPerPixel = 2; // TODO meters / pixels;
+  const metersPerPixel = 2; // TODO move to config?
 
   const positions = new Float32Array(noVertices * 3);
   const uvs = new Float32Array(noVertices * 2);
