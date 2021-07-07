@@ -21,7 +21,7 @@
       }
     });
 
-    position.subscribe(newPosition => {
+    position.subscribe((newPosition) => {
       if (marker) {
         marker.remove();
       }
@@ -29,7 +29,7 @@
         const { lat, lon } = newPosition;
 
         marker = new L.Marker([lat, lon], {
-          draggable: true
+          draggable: true,
         })
           .addTo(map)
           .on("dragend", ({ target }) => {
@@ -50,12 +50,12 @@
   function initMap() {
     const map = new L.Map(container, {
       attributionControl: false,
-      crs: L.CRS.EPSG2056
+      crs: L.CRS.EPSG2056,
     });
 
     L.control
       .attribution({
-        prefix: false
+        prefix: false,
       })
       .addTo(map);
 
@@ -67,7 +67,7 @@
   function toLonLat({ lat, lng }) {
     return {
       lon: lng,
-      lat: lat
+      lat: lat,
     };
   }
 </script>

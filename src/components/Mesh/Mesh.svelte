@@ -1,31 +1,35 @@
 <script>
+  import CloseIcon from "../icons/Close.svelte";
+  import DownloadIcon from "../icons/Download.svelte";
+  import downloadMesh from "./download.js";
   import getMesh from "./mesh.js";
   import Renderer from "./renderer.js";
   import { swisstopoAttribution } from "../common/config.js";
   import getRandomPlace from "../common/places.js";
   import position from "../common/position.js";
 
-  import { onMount } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
+  const dispatch = createEventDispatcher();
 
   let container;
   let width = 640;
   let height = 480;
 
-  let hasMesh = false;
+  let mesh = null;
   let isMeshLoading = false;
 
   $: renderer = new Renderer(container);
 
   $: renderer.updateSize(width, height);
 
-  position.subscribe(newPosition => {
-    hasMesh = false;
+  position.subscribe((newPosition) => {
+    mesh = null;
     if (newPosition) {
       isMeshLoading = true;
-      getMesh(newPosition).then(mesh => {
-        renderer.updateMesh(mesh);
+      getMesh(newPosition).then((newMesh) => {
+        renderer.updateMesh(newMesh);
         isMeshLoading = false;
-        hasMesh = true;
+        mesh = newMesh;
       });
     }
   });
@@ -33,6 +37,14 @@
   function clear() {
     position.set(undefined);
     return false;
+  }
+
+  function download() {
+    dispatch("download", {
+      doDownload: () => {
+        downloadMesh(mesh);
+      },
+    });
   }
 
   function randomLocation() {
@@ -56,22 +68,30 @@
     display: none;
   }
 
-  .clear-button {
+  .round-button {
     position: absolute;
-    top: 8px;
-    right: 8px;
     display: block;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border: 1px solid #aaa;
     border-radius: 100%;
     background-color: #fff;
     text-align: center;
   }
 
-  .clear-button:hover {
+  .round-button:hover {
     background-color: #ddd;
     text-decoration: none;
+  }
+
+  .clear-button {
+    top: 8px;
+    right: 8px;
+  }
+
+  .download-button {
+    top: 48px;
+    right: 8px;
   }
 
   .attribution {
@@ -86,17 +106,19 @@
 </style>
 
 <div class="mesh" bind:clientWidth={width} bind:clientHeight={height}>
-  <canvas bind:this={container} class="mesh__canvas" class:hidden={!hasMesh} />
+  <canvas bind:this={container} class="mesh__canvas" class:hidden={!mesh} />
   {#if isMeshLoading}
     Loading...
-  {:else if hasMesh}
-    <a href class="clear-button" on:click|preventDefault={clear}>
-      <svg viewBox="0 0 32 32">
-        <path
-          d="M24 10L22 8L16 14L10 8L8 10L14 16L8 22L10 24L16 18L22 24L24 22L18
-          16L24 10Z"
-          fill="#000" />
-      </svg>
+  {:else if mesh}
+    <a href class="round-button clear-button" on:click|preventDefault={clear}>
+      <CloseIcon />
+    </a>
+    <a
+      href
+      class="round-button download-button"
+      on:click|preventDefault={download}
+    >
+      <DownloadIcon />
     </a>
     <div class="attribution">
       Code: © Roman Karavia | Data:

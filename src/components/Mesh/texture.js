@@ -6,8 +6,6 @@ import {
   textureZoom,
 } from "../common/config.js";
 
-import { CanvasTexture } from "three";
-
 export default async function getTexture(position) {
   const { lon, lat } = position;
   const canvas = await loadToCanvas({
@@ -18,5 +16,5 @@ export default async function getTexture(position) {
     size: textureSize,
     url: textureUrl,
   });
-  return new CanvasTexture(canvas);
+  return canvas;
 }

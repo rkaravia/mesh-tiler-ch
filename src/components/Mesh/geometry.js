@@ -70,10 +70,12 @@ function geometryData(terrain) {
 
   const geometry = new BufferGeometry();
 
-  geometry.addAttribute("position", new BufferAttribute(positions, 3));
-  geometry.addAttribute("uv", new BufferAttribute(uvs, 2));
+  geometry.setAttribute("position", new BufferAttribute(positions, 3));
+  geometry.setAttribute("uv", new BufferAttribute(uvs, 2));
   geometry.setIndex(new BufferAttribute(triangles, 1));
   geometry.computeVertexNormals();
 
-  return geometry;
+  const normals = geometry.getAttribute("normal").array;
+
+  return { geometry, positions, uvs, triangles, normals };
 }

@@ -6,6 +6,7 @@ import {
   PerspectiveCamera,
   Scene,
   WebGLRenderer,
+  CanvasTexture,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
@@ -34,10 +35,12 @@ export default class Renderer {
     }
   }
 
-  updateMesh({ geometry, texture }) {
+  updateMesh({ geometry, textureCanvas }) {
     this.hasGeometry = true;
     this.frontMesh.geometry = geometry;
-    this.frontMesh.material = new MeshBasicMaterial({ map: texture });
+    this.frontMesh.material = new MeshBasicMaterial({
+      map: new CanvasTexture(textureCanvas),
+    });
     this.backMesh.geometry = geometry;
     this.backMesh.material = new MeshBasicMaterial({
       color: 0x614d48,
