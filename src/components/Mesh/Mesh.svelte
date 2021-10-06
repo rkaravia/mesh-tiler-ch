@@ -121,7 +121,11 @@
       <DownloadIcon />
     </a>
     <div class="attribution">
-      Code: © Roman Karavia | Data:
+      Code: © Roman Karavia
+      <a href="https://github.com/rkaravia/mesh-tiler-ch" target="_blank">
+        Open Source
+      </a>
+      | Data:
       {@html swisstopoAttribution}
     </div>
   {:else}

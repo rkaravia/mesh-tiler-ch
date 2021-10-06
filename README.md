@@ -1,17 +1,14 @@
-# MeshTiler
+# MeshTiler CH
 
-Get a 3D mesh of any place in the world using [MapTiler](https://www.maptiler.com), based on
-[RGB Terrain](https://cloud.maptiler.com/tiles/terrain-rgb/) and
-[Satellite](https://cloud.maptiler.com/tiles/satellite/) tiles.
+Get a 3D mesh of any place in Switzerland using data from Swisstopo, based on
+[swissALTI3D](https://www.swisstopo.admin.ch/en/geodata/height/alti3d.html) elevation data and
+[SWISSIMAGE](https://www.swisstopo.admin.ch/en/geodata/images/ortho/swissimage10.html) aerial imagery.
 
-This project has been created for the
-[#MyMapTiler contest](https://twitter.com/MapTiler/status/1166349855654105090).
-It is inspired by Vladimir Agafonkin's
-[MARTINI: Real-Time RTIN Terrain Mesh](https://observablehq.com/@mourner/martin-real-time-rtin-terrain-mesh) Observable notebook.
+Demo: **[Try it here!](https://labs.karavia.ch/mesh-tiler-ch/)**
 
-Demo: **[Try it here!](https://mesh-tiler.karavia.ch)**
+[<img src="screenshot.png" alt="Screenshot" width="640">](https://labs.karavia.ch/mesh-tiler-ch/)
 
-[<img src="screenshot.png" alt="Screenshot" width="640">](https://mesh-tiler.karavia.ch)
+See also: [MeshTiler](https://github.com/rkaravia/MeshTiler) – similar project with worldwide coverage
 
 ## Install
 
