@@ -38,3 +38,7 @@ The following open source libraries have made MeshTiler possible:
   [BSD 2-Clause License](https://github.com/Leaflet/Leaflet/blob/master/LICENSE)
 - [three.js](https://threejs.org), © 2010-2021 three.js authors,
   [MIT License](https://github.com/mrdoob/three.js/blob/master/LICENSE)
+- [gltf-js-utils](https://github.com/wnayes/glTF-js-utils), © 2017 Will Nayes,
+  [MIT License](https://github.com/wnayes/glTF-js-utils/blob/main/LICENSE)
+- [geotiff.js](https://github.com/geotiffjs/geotiff.js), © 2015 EOX IT Services GmbH,
+  [MIT License](https://github.com/geotiffjs/geotiff.js/blob/master/LICENSE)
